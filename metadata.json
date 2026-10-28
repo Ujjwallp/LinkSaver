@@ -1,0 +1,6 @@
+{
+  "name": "LinkVault",
+  "description": "A 100% offline, encrypted link manager and password vault with local backup/restore and system autofill.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

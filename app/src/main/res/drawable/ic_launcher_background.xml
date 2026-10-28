@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Deep Obsidian-Violet Vault Canvas -->
+    <path
+        android:fillColor="#0F0C1B"
+        android:pathData="M0,0h108v108h-108z" />
+
+    <!-- Subtle Ambient Radial Vault Glow -->
+    <path android:pathData="M0,0h108v108h-108z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:centerX="54"
+                android:centerY="50"
+                android:gradientRadius="56"
+                android:type="radial">
+                <item android:color="#2E1C59" android:offset="0.0" />
+                <item android:color="#0F0C1B" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Subtle Cyber Grid Ring -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M54,54m-42,0a42,42 0,1 1,84 0a42,42 0,1 1,-84 0"
+        android:strokeColor="#1F7C4DFF"
+        android:strokeWidth="0.8" />
+</vector>

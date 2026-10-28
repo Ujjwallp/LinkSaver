@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "description": "Read-only bundled map of well-known Android application packages to registrable web domains. Used strictly to suggest user-confirmed links offline; NEVER used for automatic filling or silent linking.",
+  "pairs": [
+    {
+      "appPackage": "com.netflix.mediaclient",
+      "appLabel": "Netflix",
+      "domain": "netflix.com"
+    },
+    {
+      "appPackage": "com.instagram.android",
+      "appLabel": "Instagram",
+      "domain": "instagram.com"
+    },
+    {
+      "appPackage": "com.github.android",
+      "appLabel": "GitHub",
+      "domain": "github.com"
+    },
+    {
+      "appPackage": "com.spotify.music",
+      "appLabel": "Spotify",
+      "domain": "spotify.com"
+    },
+    {
+      "appPackage": "com.reddit.frontpage",
+      "appLabel": "Reddit",
+      "domain": "reddit.com"
+    },
+    {
+      "appPackage": "com.discord",
+      "appLabel": "Discord",
+      "domain": "discord.com"
+    },
+    {
+      "appPackage": "com.linkedin.android",
+      "appLabel": "LinkedIn",
+      "domain": "linkedin.com"
+    },
+    {
+      "appPackage": "com.amazon.mshop.android.shopping",
+      "appLabel": "Amazon Shopping",
+      "domain": "amazon.com"
+    },
+    {
+      "appPackage": "com.dropbox.android",
+      "appLabel": "Dropbox",
+      "domain": "dropbox.com"
+    },
+    {
+      "appPackage": "com.slack",
+      "appLabel": "Slack",
+      "domain": "slack.com"
+    },
+    {
+      "appPackage": "com.pinterest",
+      "appLabel": "Pinterest",
+      "domain": "pinterest.com"
+    },
+    {
+      "appPackage": "tv.twitch.android.app",
+      "appLabel": "Twitch",
+      "domain": "twitch.tv"
+    }
+  ]
+}

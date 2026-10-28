@@ -1,0 +1,21 @@
+# Baseline Profile rules for LinkVault (cold start, LazyColumn scrolling, and Add/Edit Link dialog)
+HSPLcom/example/MainActivity;-><init>()V
+HSPLcom/example/MainActivity;->onCreate(Landroid/os/Bundle;)V
+HSPLcom/example/MainActivity;->onResume()V
+HSPLcom/example/data/AppDatabase$Companion;->getDatabase(Landroid/content/Context;)Lcom/example/data/AppDatabase;
+HSPLcom/example/data/LinkRepository;-><init>(Lcom/example/data/LinkDao;)V
+HSPLcom/example/ui/LinkViewModel;-><init>(Lcom/example/data/LinkRepository;Landroid/content/Context;)V
+HSPLcom/example/ui/LinkUiModel;-><init>(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;JJJLjava/lang/String;ZZLjava/util/List;Ljava/util/List;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/example/data/LinkEntity;)V
+HSPLcom/example/ui/LinkUiMapper;->toUiModel(Lcom/example/data/LinkEntity;Landroid/content/Context;Z)Lcom/example/ui/LinkUiModel;
+HSPLcom/example/ui/LinkUiMapper;->buildVaultListRows(Ljava/util/List;Landroid/content/Context;Z)Ljava/util/List;
+HSPLcom/example/ui/VaultListRow$HeaderRow;-><init>(Ljava/lang/String;ILjava/lang/String;)V
+HSPLcom/example/ui/VaultListRow$ItemRow;-><init>(Lcom/example/ui/LinkUiModel;IZ)V
+HSPLcom/example/ui/LinkSaverAppKt;->LinkSaverApp(Lcom/example/ui/LinkViewModel;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;ZLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/example/ui/VaultCardComponentsKt;->CheapLinkItemCard(Lcom/example/ui/LinkUiModel;ZZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/example/ui/VaultCardComponentsKt;->CheapDenseLinkRow(Lcom/example/ui/LinkUiModel;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+HSPLcom/example/ui/VaultCardComponentsKt;->CheapPasswordItemCard(Lcom/example/ui/LinkUiModel;ZZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/example/data/FaviconStorageManager;->getLocalFaviconPathIfPresent(Landroid/content/Context;Ljava/lang/String;)Ljava/lang/String;
+HSPLcom/example/data/AttachmentThumbnailManager;->getExistingThumbnailOrOriginal(Landroid/content/Context;Ljava/lang/String;)Ljava/lang/String;
+Landroidx/compose/foundation/lazy/LazyColumnKt;
+Landroidx/compose/foundation/lazy/LazyListMeasureKt;
+Landroidx/compose/foundation/lazy/LazyListState;

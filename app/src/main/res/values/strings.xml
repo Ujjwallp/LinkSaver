@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Link Saver</string>
+    <string name="vault_search_placeholder">Search links, notes, or domains…</string>
+    <string name="vault_empty_title">Your Vault is Empty</string>
+    <string name="vault_no_matches_title">No Matching Items Found</string>
+    <string name="vault_reset_filters">Reset All Filters</string>
+    <string name="vault_add_link">Add New Link</string>
+    <string name="vault_edit_link">Edit Link</string>
+    <string name="vault_save_changes">Save Changes</string>
+    <string name="vault_private_vault">Private Vault</string>
+    <string name="vault_passwords">Passwords</string>
+    <string name="vault_notes">Notes</string>
+    <string name="vault_duplicate_cleaner">Smart Duplicate Cleaner</string>
+    <string name="vault_security_center">Security &amp; Encryption Center</string>
+</resources>
