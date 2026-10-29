@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Link Saver</string>
+    <string name="app_name">LinkVault</string>
     <string name="vault_search_placeholder">Search links, notes, or domains…</string>
     <string name="vault_empty_title">Your Vault is Empty</string>
     <string name="vault_no_matches_title">No Matching Items Found</string>

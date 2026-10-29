@@ -22,7 +22,7 @@
     </queries>
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -69,12 +69,14 @@
             android:name=".autofill.AutofillConfirmationActivity"
             android:exported="false"
             android:excludeFromRecents="true"
+            tools:targetApi="26"
             android:theme="@style/Theme.MyApplication" />
 
         <!-- System Autofill Service -->
         <service
             android:name=".autofill.VaultAutofillService"
             android:permission="android.permission.BIND_AUTOFILL_SERVICE"
+            tools:targetApi="26"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.service.autofill.AutofillService" />
@@ -88,6 +90,7 @@
         <service
             android:name=".autofill.VaultCredentialProviderService"
             android:permission="android.permission.BIND_CREDENTIAL_PROVIDER_SERVICE"
+            tools:targetApi="34"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.service.credentials.CredentialProviderService" />

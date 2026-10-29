@@ -17,6 +17,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.data.AppDatabase
 import com.example.data.LinkRepository
+import com.example.ui.BiometricHostActivity
 import com.example.ui.LinkSaverApp
 import com.example.ui.LinkViewModel
 import com.example.ui.LinkViewModelFactory
@@ -29,7 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
-class MainActivity : FragmentActivity() {
+class MainActivity : FragmentActivity(), BiometricHostActivity {
 
     private val database by lazy { AppDatabase.getDatabase(applicationContext) }
     private val repository by lazy { LinkRepository(database.linkDao()) }
@@ -94,7 +95,7 @@ class MainActivity : FragmentActivity() {
     }
 
     // Direct interface called from Compose for secure hardware verification
-    fun isBiometricHardwareAvailable(): Boolean {
+    override fun isBiometricHardwareAvailable(): Boolean {
         return try {
             val biometricManager = BiometricManager.from(this)
             biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) == BiometricManager.BIOMETRIC_SUCCESS
@@ -104,7 +105,7 @@ class MainActivity : FragmentActivity() {
     }
 
     // Direct trigger interface using Keystore CryptoObject for hardware-enforced verification
-    fun triggerBiometricPrompt(
+    override fun triggerBiometricPrompt(
         onSuccess: () -> Unit,
         onError: (String) -> Unit
     ) {
@@ -209,7 +210,7 @@ class MainActivity : FragmentActivity() {
                 hardware.contains("ranchu")
     }
 
-    fun setSecureScreenEnabled(enabled: Boolean) {
+    override fun setSecureScreenEnabled(enabled: Boolean) {
         runOnUiThread {
             try {
                 val isShieldOn = viewModel.privacyShieldEnabled.value

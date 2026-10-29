@@ -632,7 +632,7 @@ object AutofillStructureParser {
             }
         } else null
 
-        val important = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val important = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             try {
                 node.importantForAutofill
             } catch (_: Throwable) {

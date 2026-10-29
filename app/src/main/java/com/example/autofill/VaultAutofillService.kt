@@ -16,7 +16,7 @@ import android.service.autofill.SaveRequest
 import android.view.autofill.AutofillValue
 import android.widget.RemoteViews
 import androidx.annotation.RequiresApi
-import com.example.R
+import com.example.feature.autofill.R
 import com.example.data.AppDatabase
 import com.example.security.KeyHierarchy
 import com.example.security.SecureStorage
@@ -61,10 +61,6 @@ class VaultAutofillService : AutofillService() {
 
         serviceScope.launch {
             try {
-                // Ensure hardware keystore unwrap is attempted on cold service start after reboot/update
-                if (!KeyHierarchy.isVaultUnlocked()) {
-                    KeyHierarchy.unlockWithHardwareKeystore(applicationContext)
-                }
                 val isVaultUnlocked = isVaultUnlockedForDirectFill()
 
                 val db = AppDatabase.getDatabase(applicationContext)
@@ -375,7 +371,12 @@ class VaultAutofillService : AutofillService() {
     private fun isVaultUnlockedForDirectFill(): Boolean {
         val prefs = SecureStorage.getEncryptedPrefs(applicationContext, "linksaver_vault_security_encrypted")
         val lockEnabled = prefs.getBoolean("passcode_enabled", false)
-        if (!lockEnabled) return true
+        if (!lockEnabled) {
+            if (!KeyHierarchy.isVaultUnlocked()) {
+                KeyHierarchy.unlockWithHardwareKeystore(applicationContext)
+            }
+            return true
+        }
         return KeyHierarchy.isVaultUnlocked()
     }
 

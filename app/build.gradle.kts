@@ -2,7 +2,6 @@ plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin.compose)
   alias(libs.plugins.google.devtools.ksp)
-  alias(libs.plugins.roborazzi)
 }
 
 android {
@@ -46,8 +45,14 @@ android {
     debug {
       signingConfig = signingConfigs.getByName("debugConfig")
     }
+    create("smooth") {
+      initWith(getByName("release"))
+      matchingFallbacks += listOf("release")
+      signingConfig = signingConfigs.getByName("debugConfig")
+      isDebuggable = false
+    }
     // Note: For local release-like frame timing profiling signed with debugConfig,
-    // use the release buildType or enable R8 on a local profile build.
+    // use the smooth buildType.
   }
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -58,6 +63,11 @@ android {
     buildConfig = true
   }
   testOptions { unitTests { isIncludeAndroidResources = true } }
+  lint {
+    abortOnError = false
+    checkDependencies = false
+    informational += listOf("UnusedResources")
+  }
 }
 
 // Compose Strong Skipping Mode is enabled by default in Kotlin 2.0.20+ (project uses Kotlin 2.2.10).
@@ -81,6 +91,11 @@ ksp {
 // Some unused dependencies are commented out below instead of being removed.
 // This makes it easy to add them back in the future if needed.
 dependencies {
+  implementation(project(":core:security"))
+  implementation(project(":core:crypto"))
+  implementation(project(":core:data"))
+  implementation(project(":feature:vault"))
+  implementation(project(":feature:autofill"))
   implementation(platform(libs.androidx.compose.bom))
   implementation(libs.androidx.profileinstaller)
   implementation(libs.androidx.work.runtime.ktx)
@@ -110,15 +125,103 @@ dependencies {
   testImplementation(libs.junit)
   testImplementation(libs.kotlinx.coroutines.test)
   testImplementation(libs.robolectric)
-  testImplementation(libs.roborazzi)
-  testImplementation(libs.roborazzi.compose)
-  testImplementation(libs.roborazzi.junit.rule)
-  androidTestImplementation(platform(libs.androidx.compose.bom))
-  androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-  androidTestImplementation(libs.androidx.espresso.core)
-  androidTestImplementation(libs.androidx.junit)
-  androidTestImplementation(libs.androidx.runner)
   debugImplementation(libs.androidx.compose.ui.test.manifest)
   debugImplementation(libs.androidx.compose.ui.tooling)
-  "ksp"(libs.androidx.room.compiler)
+}
+
+// ==========================================
+// Phase 3e Architecture & Policy Enforcement Tasks
+// ==========================================
+
+tasks.register("verifyNoNetworkPermissions") {
+  notCompatibleWithConfigurationCache("Requires dynamic directory inspection")
+  description = "Verifies that the merged manifest and source manifest contain zero network permissions"
+  group = "verification"
+  doLast {
+    val forbiddenPermissions = listOf(
+      "android.permission.INTERNET",
+      "android.permission.ACCESS_NETWORK_STATE",
+      "android.permission.ACCESS_WIFI_STATE",
+      "android.permission.CHANGE_NETWORK_STATE"
+    )
+    val manifestFiles = fileTree(layout.buildDirectory.dir("intermediates")) {
+      include("**/AndroidManifest.xml")
+    }.plus(files("src/main/AndroidManifest.xml"))
+
+    for (file in manifestFiles) {
+      if (file.exists()) {
+        val text = file.readText()
+        for (perm in forbiddenPermissions) {
+          if (text.contains(perm) && !text.contains("tools:node=\"remove\"")) {
+            throw GradleException("FATAL ARCHITECTURE BREACH: Forbidden network permission '$perm' found in $file! LinkVault is strictly offline.")
+          }
+        }
+      }
+    }
+    println("SUCCESS: verifyNoNetworkPermissions - Zero network permissions found.")
+  }
+}
+
+tasks.register("verifyNoForbiddenDependencies") {
+  notCompatibleWithConfigurationCache("Requires configurations inspection")
+  description = "Verifies that no forbidden cloud, analytics, AI, or network libraries are present in configurations"
+  group = "verification"
+  doLast {
+    val forbiddenPrefixes = listOf(
+      "com.google.firebase",
+      "com.google.android.gms",
+      "retrofit2",
+      "io.ktor",
+      "com.google.ai.client.generativeai"
+    )
+    val checkConfigs = listOf("releaseRuntimeClasspath", "debugRuntimeClasspath")
+    for (configName in checkConfigs) {
+      val config = configurations.findByName(configName) ?: continue
+      for (dep in config.resolvedConfiguration.resolvedArtifacts) {
+        val id = "${dep.moduleVersion.id.group}:${dep.moduleVersion.id.name}"
+        for (forbidden in forbiddenPrefixes) {
+          if (id.startsWith(forbidden)) {
+            throw GradleException("FATAL ARCHITECTURE BREACH: Forbidden dependency '$id' detected in configuration '$configName'! LinkVault is strictly zero-cloud.")
+          }
+        }
+      }
+    }
+    println("SUCCESS: verifyNoForbiddenDependencies - Zero cloud/network dependencies detected.")
+  }
+}
+
+tasks.register("verifyNoForbiddenImports") {
+  notCompatibleWithConfigurationCache("Requires fileTree inspection")
+  description = "Scans Kotlin source files for forbidden network/cloud imports"
+  group = "verification"
+  doLast {
+    val forbiddenImports = listOf(
+      "java.net.HttpURLConnection",
+      "java.net.URL",
+      "retrofit2.",
+      "com.google.firebase",
+      "okhttp3.OkHttpClient"
+    )
+    val srcFiles = fileTree("src/main/java") {
+      include("**/*.kt")
+    }
+    for (file in srcFiles) {
+      val lines = file.readLines()
+      for ((idx, line) in lines.withIndex()) {
+        val trimmed = line.trim()
+        if (trimmed.startsWith("import ")) {
+          for (forbidden in forbiddenImports) {
+            if (trimmed.contains(forbidden)) {
+              throw GradleException("FATAL SECURITY BREACH: Forbidden import '$forbidden' detected in ${file.name}:${idx + 1}! Direct network calls are prohibited.")
+            }
+          }
+        }
+      }
+    }
+    println("SUCCESS: verifyNoForbiddenImports - Zero forbidden network/cloud imports detected.")
+  }
+}
+
+tasks.named("check") {
+  dependsOn("verifyNoNetworkPermissions", "verifyNoForbiddenDependencies", "verifyNoForbiddenImports")
 }

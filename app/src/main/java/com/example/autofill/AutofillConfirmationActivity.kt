@@ -41,9 +41,10 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
-import com.example.R
+import com.example.feature.autofill.R
 import com.example.data.AppDatabase
 import com.example.data.LinkEntity
+import com.example.security.BiometricSecurityHelper
 import com.example.security.KeyHierarchy
 import com.example.security.LockoutManager
 import com.example.security.PinSecurity
@@ -773,30 +774,45 @@ class AutofillConfirmationActivity : FragmentActivity() {
                 .setNegativeButtonText("Use PIN")
                 .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
                 .build()
-            prompt.authenticate(promptInfo)
+            val cryptoObject = BiometricSecurityHelper.createCryptoObject()
+            if (cryptoObject != null) {
+                prompt.authenticate(promptInfo, cryptoObject)
+            } else {
+                prompt.authenticate(promptInfo)
+            }
         } catch (e: Throwable) {
             onError(e.message ?: "Biometric authentication unavailable")
         }
     }
 
     private fun verifyUserPin(input: String): Boolean {
+        if (input.isBlank()) {
+            return false
+        }
         val lockout = LockoutManager(applicationContext)
-        if (lockout.checkStatus() is com.example.security.LockoutStatus.Locked) {
+        val currentStatus = lockout.checkStatus()
+        if (currentStatus is com.example.security.LockoutStatus.Locked ||
+            currentStatus is com.example.security.LockoutStatus.Erased
+        ) {
             return false
         }
         val prefs = SecureStorage.getEncryptedPrefs(applicationContext, "linksaver_vault_security_encrypted")
         val storedHash = prefs.getString("passcode_code", "") ?: ""
         if (storedHash.isBlank()) {
-            // No PIN configured on profile yet
-            KeyHierarchy.unlockWithHardwareKeystore(applicationContext)
-            return true
+            return false
         }
         val ok = PinSecurity.verifyPasscode(input.toCharArray(), storedHash)
         if (ok) {
             lockout.recordSuccessfulUnlock()
             KeyHierarchy.unlockWithHardwareKeystore(applicationContext)
         } else {
-            lockout.recordFailedAttempt()
+            val newStatus = lockout.recordFailedAttempt()
+            if (newStatus is com.example.security.LockoutStatus.Erased) {
+                KeyHierarchy.lockVault()
+                lifecycleScope.launch(Dispatchers.IO) {
+                    AppDatabase.getDatabase(applicationContext).linkDao().deleteAllLinks()
+                }
+            }
         }
         return ok
     }

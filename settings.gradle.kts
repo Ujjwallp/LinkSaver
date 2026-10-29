@@ -25,3 +25,8 @@ dependencyResolutionManagement {
 rootProject.name = "LinkVault"
 
 include(":app")
+include(":core:security")
+include(":core:crypto")
+include(":core:data")
+include(":feature:vault")
+include(":feature:autofill")

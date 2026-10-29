@@ -21,3 +21,7 @@
 # Strip line numbers and source file names in release for anti-reverse engineering
 -renamesourcefileattribute SourceFile
 -keepattributes SourceFile,LineNumberTable
+
+# Suppress compile-only errorprone annotation warnings from transitive Tink/SecurityCrypto
+-dontwarn com.google.errorprone.annotations.**
+
